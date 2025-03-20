@@ -1,0 +1,21 @@
+Component,Asp. Rack,Asp. Posi,Dsp. Rack,Dsp. Posi,Volume
+1-pTDH3,source,1,Destination_1,A1,8
+2-pPGK1,source,6,Destination_1,A1,8
+3-pCCW12,source,11,Destination_1,A1,8
+etc,source,16,Destination_1,A1,9
+1-pTEF2,source,2,Destination_1,B1,8
+2-pPGK1,source,6,Destination_1,B1,8
+3-pCCW12,source,11,Destination_1,B1,8
+etc,source,16,Destination_1,B1,9
+1-pHTB2,source,3,Destination_1,C1,8
+2-pPGK1,source,6,Destination_1,C1,8
+3-pCCW12,source,11,Destination_1,C1,8
+etc,source,16,Destination_1,C1,9
+1-pALD6,source,4,Destination_1,D1,8
+2-pPGK1,source,6,Destination_1,D1,8
+3-pCCW12,source,11,Destination_1,D1,8
+etc,source,16,Destination_1,D1,9
+1-pRNR2,source,5,Destination_1,E1,8
+2-pPGK1,source,6,Destination_1,E1,8
+3-pCCW12,source,11,Destination_1,E1,8
+etc,source,16,Destination_1,E1,9
