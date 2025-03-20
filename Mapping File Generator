@@ -1,0 +1,56 @@
+import pandas as pd
+
+def generate_full_mapping_file(input_file_path, output_file_path):
+    # Load input file
+    xls = pd.ExcelFile(input_file_path)
+    source_df = pd.read_excel(xls, sheet_name="source")
+    components_df = pd.read_excel(xls, sheet_name="components")
+    destination_df = pd.read_excel(xls, sheet_name="destination")
+
+    # Melt the destination plate layout into a long format
+    destination_melted = destination_df.melt(id_vars=["Destination_1"], var_name="Column", value_name="Well No.")
+    destination_melted["Dsp. Posi"] = destination_melted["Destination_1"] + destination_melted["Column"].astype(str)
+    destination_melted.drop(columns=["Column"], inplace=True)
+
+    # Prepare source well mapping
+    source_mapping = source_df.set_index("Well No.")["Name"].to_dict()
+
+    # Initialize mapping file list
+    mapping_list = []
+
+    # Iterate over all rows in the components sheet (ensuring full row coverage)
+    for _, row in components_df.iterrows():
+        well_no = row["No."]
+        destination_pos = destination_melted[destination_melted["Well No."] == well_no]["Dsp. Posi"].values
+
+        if len(destination_pos) == 0:
+            continue
+
+        destination_pos = destination_pos[0]  # Take the first match
+
+        # Iterate through all component columns dynamically
+        num_components = (len(row) - 1) // 2  # Adjust for dynamic number of components
+
+        for i in range(1, num_components + 1):
+            component_col = f"Component {i}"
+            volume_col = f"Component {i} vol."
+
+            if component_col in row and volume_col in row and pd.notna(row[component_col]) and pd.notna(row[volume_col]):
+                component = row[component_col]
+                volume = row[volume_col]
+                asp_pos = [k for k, v in source_mapping.items() if v == component]
+
+                if asp_pos:
+                    mapping_list.append({
+                        "Component": component,
+                        "Asp. Rack": "source",
+                        "Asp. Posi": asp_pos[0],
+                        "Dsp. Rack": "Destination_1",
+                        "Dsp. Posi": destination_pos,
+                        "Volume": volume
+                    })
+
+    # Convert to DataFrame and save as CSV
+    mapping_df = pd.DataFrame(mapping_list)
+    mapping_df.to_csv(output_file_path, index=False)
+    print(f"Mapping file saved to {output_file_path}")
